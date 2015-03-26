@@ -1,8 +1,4 @@
 lyssa = require './lyssa'
+proxy = require 'express-http-proxy'
 
-server = lyssa()
-
-server.use '/i', (req, res) ->
-  res.send 'i'
-
-server.listen 8000
+lyssa('toutiao.io').listen 8000
