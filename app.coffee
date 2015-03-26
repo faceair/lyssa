@@ -1,3 +1,3 @@
 lyssa = require './lyssa'
 
-lyssa('toutiao.io').listen 8000
+lyssa('http://toutiao.io').listen 8000

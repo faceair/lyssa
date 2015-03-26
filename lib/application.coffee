@@ -3,12 +3,16 @@ util = require 'util'
 pluggable = require 'node-pluggable'
 
 exports.use = pluggable.use
+exports.on = pluggable.bind
+exports.emit = pluggable.emit
 
 exports.handle = (req, res) ->
-  pluggable.on req.url, req, res, (err) ->
-    if err
-      res.statusCode = 500
-      res.send util.inspect err
+
+  pluggable.run req.url, req, res, (err) ->
+    pluggable.emit 'error', err, req, res if err
+
+  res.on 'finish', ->
+    pluggable.emit 'after', req, res
 
 exports.listen = (port, callback) ->
   server = http.createServer @

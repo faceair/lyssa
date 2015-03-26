@@ -1,7 +1,13 @@
 _ = require 'underscore'
 
-exports.set =
-exports.header = (name, value) ->
+exports.get = (field) ->
+ @getHeader field
+
+exports.status = (status) ->
+  @statusCode = status
+  @
+
+exports.set = exports.header = (name, value) ->
   headers = name
 
   unless _.isObject headers
@@ -16,11 +22,9 @@ exports.send = (status, data) ->
   unless _.isNumber status
     [status, data] = [null, status]
 
-  @statusCode = status if status
+  unless @get('Content-Type')
+    @set 'Content-Type', 'text/html; charset=utf-8'
+  @status = status if status
 
   @end data
-  @
-
-exports.status = (status) ->
-  @statusCode = status
   @
