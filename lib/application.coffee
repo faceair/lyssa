@@ -16,4 +16,8 @@ exports.handle = (req, res) ->
 
 exports.listen = (port, callback) ->
   server = http.createServer @
-  return server.listen.apply server, arguments
+  server.listen.apply server, [port,
+    ->
+      pluggable.emit 'start'
+      callback() if callback
+  ]

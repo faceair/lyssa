@@ -6,9 +6,7 @@ application = require './lib/application'
 request = require './lib/request'
 response = require './lib/response'
 
-middleware = {}
-for middleware_name in ['proxy']
-  middleware[middleware_name] = require './lib/middleware/' + middleware_name
+proxy = require './lib/middleware/proxy'
 
 request.__proto__ = http.IncomingMessage.prototype
 response.__proto__ = http.ServerResponse.prototype
@@ -26,11 +24,14 @@ module.exports = (domain) ->
   app.use '/lyssa', (req, res) ->
     res.send 'Hello, I am lyssa.'
 
-  app.use middleware.proxy domain
+  app.use proxy domain
 
   app.use (req, res) ->
     unless res.finished and res.writable
       res.send 404, "Cannot #{req.method} #{req.url}\n"
+
+  app.on 'start', ->
+    console.info "lyssa is runing ..."
 
   app.on 'error', (err, req, res) ->
     res.send 500, 'Something blew up!'
