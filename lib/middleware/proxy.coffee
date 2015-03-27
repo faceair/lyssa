@@ -44,6 +44,8 @@ module.exports = (options) ->
 
         res.status httpRes.statusCode
         for key, value of httpRes.headers
+          if _.isString value
+            value = value.replace host, self_host
           res.set key, value
 
         unless /image\//i.test httpRes.headers['content-type']

@@ -22,7 +22,8 @@ module.exports = (options) ->
 
   _.extend app, application
 
-  app.use rawBody(), proxy(options)
+  app.use rawBody options.limit
+  app.use proxy options
 
   app.use (req, res) ->
     unless res.finished and res.writable
