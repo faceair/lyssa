@@ -6,6 +6,7 @@ application = require './lib/application'
 response = require './lib/response'
 
 proxy = require './lib/middleware/proxy'
+rawBody = require './lib/middleware/rawBody'
 
 request =
   __proto__: http.IncomingMessage.prototype
@@ -21,7 +22,7 @@ module.exports = (options) ->
 
   _.extend app, application
 
-  app.use proxy options
+  app.use rawBody(), proxy(options)
 
   app.use (req, res) ->
     unless res.finished and res.writable
