@@ -1,5 +1,4 @@
 
 module.exports = (domain) ->
-  return (req, res, next) ->
-    console.log domain
-    next()
+  return (req, res) ->
+    res.send domain

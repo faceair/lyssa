@@ -1,3 +1,8 @@
 lyssa = require './lyssa'
+proxy = require './lib/middleware/proxy'
 
-lyssa('http://toutiao.io').listen 8000
+server = lyssa()
+
+server.use '/toutiao', proxy 'http://toutiao.io'
+
+server.listen 8000
