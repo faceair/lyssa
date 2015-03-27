@@ -1,3 +1,3 @@
 lyssa = require './lyssa'
 
-lyssa('http://toutiao.io').listen 8000
+lyssa('http://lucy.faceair.me', 'http://localhost:8000').listen 8000

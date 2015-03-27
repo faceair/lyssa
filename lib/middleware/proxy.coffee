@@ -5,7 +5,7 @@ _ = require 'underscore'
 BufferHelper = require 'bufferhelper'
 zlib = require 'zlib'
 
-module.exports = (domain) ->
+module.exports = (domain, self_domain) ->
   return (req, res, next) ->
     {protocol, host, port, hostname} = url.parse domain
 
@@ -33,11 +33,11 @@ module.exports = (domain) ->
 
         unless /image\//i.test httpRes.headers['content-type']
           if httpRes.headers['content-encoding'] is 'gzip'
-            html = zlib.gzipSync(zlib.gunzipSync(buffer).toString().replace(new RegExp(domain, 'ig'), ''))
+            html = zlib.gzipSync(zlib.gunzipSync(buffer).toString().replace(new RegExp(domain, 'ig'), self_domain))
           else
-            html = buffer.toString().replace(new RegExp(domain, 'ig'), '')
+            html = buffer.toString().replace(new RegExp(domain, 'ig'), self_domain)
 
-        res.send html
+        res.send html or buffer
 
     httpReq.on 'error', (err) ->
       next err
