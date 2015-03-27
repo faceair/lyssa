@@ -28,6 +28,13 @@ module.exports = (options) ->
       headers = _.mapObject req.headers, (value) ->
         value.replace self_host, host
 
+      switch protocol
+        when 'https:'
+          httpLib = https
+          port = 443
+        else
+          httpLib = http
+
       option =
         hostname: hostname
         port: port or 80
@@ -35,12 +42,6 @@ module.exports = (options) ->
         method: req.method
         bodyContent: bodyContent
         headers: headers
-
-      switch protocol
-        when 'https:'
-          httpLib = https
-        else
-          httpLib = http
 
       httpReq = httpLib.request option, (httpRes) ->
         bufferHelper = new BufferHelper
