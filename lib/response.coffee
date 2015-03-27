@@ -24,7 +24,7 @@ exports.send = (status, data) ->
 
   unless @get('Content-Type')
     @set 'Content-Type', 'text/html; charset=utf-8'
-  @status = status if status
+  @statusCode = status if status
 
   @end data
   @
