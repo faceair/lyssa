@@ -11,7 +11,7 @@ proxy = require './lib/middleware/proxy'
 request.__proto__ = http.IncomingMessage.prototype
 response.__proto__ = http.ServerResponse.prototype
 
-module.exports = (config) ->
+module.exports = (options) ->
   app = (req, res, next) ->
     req.__proto__ = request
     res.__proto__ = response
@@ -21,7 +21,7 @@ module.exports = (config) ->
 
   _.extend app, application
 
-  app.use proxy config
+  app.use proxy options
 
   app.use (req, res) ->
     unless res.finished and res.writable

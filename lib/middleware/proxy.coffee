@@ -4,48 +4,70 @@ http = require 'http'
 https = require 'https'
 _ = require 'underscore'
 iconv = require 'iconv-lite'
+getRawBody = require 'raw-body'
 BufferHelper = require 'bufferhelper'
 
-module.exports = ({domain, charset, self_domain}) ->
+module.exports = (options) ->
   return (req, res, next) ->
-    {protocol, host, port, hostname} = url.parse domain
+    {domain, self_domain} = options
+    unless domain and self_domain
+      throw new Error 'domain should not be empty.'
 
-    option =
-      hostname: hostname
-      port: port or 80
-      path: req.url
-      method: req.method
-      headers: _.extend req.headers,
-        host: host
+    charset = options.charset or 'utf8'
+    limit = options.limit or '1mb'
 
-    switch protocol
-      when 'https:'
-        httpLib = https
-      else
-        httpLib = http
+    getRawBody req,
+      length: req.headers['content-length'],
+      limit: limit
+    , (err, bodyContent) ->
+      return next err if err
 
-    httpReq = httpLib.request option, (httpRes) ->
-      bufferHelper = new BufferHelper
-      bufferHelper.load httpRes, (err, buffer) ->
+      self_host = url.parse(self_domain).host
+      {protocol, host, port, hostname} = url.parse domain
 
-        encoding = httpRes.headers['content-encoding']
+      headers = _.mapObject req.headers, (value) ->
+        value.replace self_host, host
 
-        res.status httpRes.statusCode
-        for key, value of httpRes.headers
-          res.set key, value
+      option =
+        hostname: hostname
+        port: port or 80
+        path: req.url
+        method: req.method
+        bodyContent: bodyContent
+        headers: headers
 
-        unless /image\//i.test httpRes.headers['content-type']
-          if encoding is 'gzip'
-            buffer = zlib.gunzipSync buffer
+      switch protocol
+        when 'https:'
+          httpLib = https
+        else
+          httpLib = http
 
-          buffer = iconv.encode(iconv.decode(buffer, charset).replace(new RegExp(domain, 'ig'), self_domain), charset)
+      httpReq = httpLib.request option, (httpRes) ->
+        bufferHelper = new BufferHelper
+        bufferHelper.load httpRes, (err, buffer) ->
+          return next err if err
 
-          if encoding is 'gzip'
-            buffer = zlib.gzipSync buffer
+          encoding = httpRes.headers['content-encoding']
 
-        res.send buffer
+          res.status httpRes.statusCode
+          for key, value of httpRes.headers
+            res.set key, value
 
-    httpReq.on 'error', (err) ->
-      next err
+          unless /image\//i.test httpRes.headers['content-type']
+            if encoding is 'gzip'
+              buffer = zlib.gunzipSync buffer
 
-    httpReq.end()
+            buffer = iconv.encode(iconv.decode(buffer, charset).replace(new RegExp(domain, 'ig'), self_domain), charset)
+
+            if encoding is 'gzip'
+              buffer = zlib.gzipSync buffer
+
+          res.send buffer
+
+      httpReq.on 'error', (err) ->
+        next err
+
+      if bodyContent
+        httpReq.write bodyContent
+
+      httpReq.end()
