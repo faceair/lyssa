@@ -6,10 +6,12 @@ application = require './lib/application'
 request = require './lib/request'
 response = require './lib/response'
 
+proxy = require './lib/middleware/proxy'
+
 request.__proto__ = http.IncomingMessage.prototype
 response.__proto__ = http.ServerResponse.prototype
 
-module.exports = ->
+module.exports = (domain) ->
   app = (req, res, next) ->
     req.__proto__ = request
     res.__proto__ = response
@@ -18,6 +20,12 @@ module.exports = ->
     app.handle req, res, next
 
   _.extend app, application
+
+  app.use proxy domain
+
+  app.use (req, res) ->
+    unless res.finished and res.writable
+      res.send 404, "Cannot #{req.method} #{req.url}\n"
 
   app.on 'start', ->
     console.info "lyssa is runing ..."
