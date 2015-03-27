@@ -19,6 +19,7 @@
   "dependencies": {
     "async": "^0.9.0",
     "bufferhelper": "^0.2.0",
+    "iconv-lite": "^0.4.7",
     "node-pluggable": "^0.1.2",
     "underscore": "^1.8.2"
   }

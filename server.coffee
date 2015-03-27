@@ -1,3 +1,8 @@
 lyssa = require './lyssa'
 
-lyssa('http://lucy.faceair.me', 'http://localhost:8000').listen 8000
+server = lyssa
+  domain: 'http://www.w3school.com.cn'
+  charset: 'gbk'
+  self_domain: 'http://localhost:8000'
+
+server.listen 8000
