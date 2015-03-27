@@ -3,6 +3,7 @@ http = require 'http'
 https = require 'https'
 _ = require 'underscore'
 BufferHelper = require 'bufferhelper'
+zlib = require 'zlib'
 
 module.exports = (domain) ->
   return (req, res, next) ->
@@ -10,7 +11,7 @@ module.exports = (domain) ->
 
     option =
       hostname: hostname
-      port: port ? 80
+      port: port or 80
       path: req.url
       method: req.method
       headers: _.extend req.headers,
@@ -30,7 +31,13 @@ module.exports = (domain) ->
         for key, value of httpRes.headers
           res.set key, value
 
-        res.end buffer
+        unless /image\//i.test httpRes.headers['content-type']
+          if httpRes.headers['content-encoding'] is 'gzip'
+            html = zlib.gzipSync(zlib.gunzipSync(buffer).toString().replace(new RegExp(domain, 'ig'), ''))
+          else
+            html = buffer.toString().replace(new RegExp(domain, 'ig'), '')
+
+        res.send html
 
     httpReq.on 'error', (err) ->
       next err
