@@ -3,12 +3,12 @@ http = require 'http'
 _ = require 'underscore'
 
 application = require './lib/application'
-request = require './lib/request'
 response = require './lib/response'
 
 proxy = require './lib/middleware/proxy'
 
-request.__proto__ = http.IncomingMessage.prototype
+request =
+  __proto__: http.IncomingMessage.prototype
 response.__proto__ = http.ServerResponse.prototype
 
 module.exports = (options) ->
