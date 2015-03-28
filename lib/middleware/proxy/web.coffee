@@ -1,49 +1,27 @@
-url = require 'url'
-http = require 'http'
-https = require 'https'
 _ = require 'underscore'
 
 module.exports = (options) ->
-  {target, forward} = options
-
   return (req, res, next) ->
     bufferHelper = require('./lib/bufferHelper')(options)
-    self_host = url.parse(forward).host
-    {protocol, host, port, hostname} = url.parse target
+    proxyConf = require('./lib/proxyConf')(options)
 
-    headers = _.mapObject req.headers, (value) ->
-      value.replace self_host, host
+    proxyConf req, (httpLib, httpConf, {host, self_host}) ->
+      httpReq = httpLib.request httpConf, (httpRes) ->
+        bufferHelper httpRes, (err, buffer) ->
+          return next err if err
 
-    switch protocol
-      when 'https:'
-        httpLib = https
-        port = 443
-      else
-        httpLib = http
+          res.status httpRes.statusCode
+          for key, value of httpRes.headers
+            if _.isString value
+              value = value.replace host, self_host
+            res.set key, value
 
-    httpReq = httpLib.request
-      hostname: hostname
-      port: port or 80
-      path: req.url
-      method: req.method
-      bodyContent: req.bodyContent or null
-      headers: headers
-    , (httpRes) ->
-      bufferHelper httpRes, (err, buffer) ->
-        return next err if err
+          res.send buffer
 
-        res.status httpRes.statusCode
-        for key, value of httpRes.headers
-          if _.isString value
-            value = value.replace host, self_host
-          res.set key, value
+      httpReq.on 'error', (err) ->
+        next err
 
-        res.send buffer
+      if req.bodyContent
+        httpReq.write req.bodyContent
 
-    httpReq.on 'error', (err) ->
-      next err
-
-    if req.bodyContent
-      httpReq.write req.bodyContent
-
-    httpReq.end()
+      httpReq.end()
