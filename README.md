@@ -9,20 +9,20 @@ A simple reverse proxy.
 
 ## usage
 
-lyssa = require './lyssa'
+    lyssa = require './lyssa'
 
-server = lyssa
-  target: 'http://lucy.faceair.me'
-  forward: 'http://localhost:8000'
-server.listen 8000
+    server = lyssa
+      target: 'http://lucy.faceair.me'
+      forward: 'http://localhost:8000'
+    server.listen 8000
 
 ## api
 
-require('lyssa')(option)
+`require('lyssa')(option)`
 
 - option.target domain of proxy server
 - option.forward your own domain
-- option.limit the byte limit of the body, default '1mb'
+- option.limit the byte limit of the body, default `1mb`
 
 ## todo
 
