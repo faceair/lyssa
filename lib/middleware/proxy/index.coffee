@@ -4,6 +4,8 @@ http = require 'http'
 https = require 'https'
 _ = require 'underscore'
 iconv = require 'iconv-lite'
+chardet = require 'chardet'
+charsetParser = require 'charset-parser'
 BufferHelper = require 'bufferhelper'
 
 module.exports = (options) ->
@@ -11,8 +13,6 @@ module.exports = (options) ->
     {domain, self_domain} = options
     unless domain and self_domain
       throw new Error 'domain should not be empty.'
-
-    charset = options.charset or 'utf8'
 
     self_host = url.parse(self_domain).host
     {protocol, host, port, hostname} = url.parse domain
@@ -40,22 +40,21 @@ module.exports = (options) ->
       bufferHelper.load httpRes, (err, buffer) ->
         return next err if err
 
-        encoding = httpRes.headers['content-encoding']
-
         res.status httpRes.statusCode
         for key, value of httpRes.headers
           if _.isString value
             value = value.replace host, self_host
           res.set key, value
 
-        unless /image\//i.test httpRes.headers['content-type']
-          if encoding is 'gzip'
-            buffer = zlib.gunzipSync buffer
+        if /text\//i.test httpRes.headers['content-type']
+          encoding = httpRes.headers['content-encoding']
 
+          buffer = zlib.gunzipSync buffer if encoding is 'gzip'
+
+          charset = charsetParser(httpRes.headers['content-type']) or chardet.detect(buffer)
           buffer = iconv.encode(iconv.decode(buffer, charset).replace(new RegExp(domain, 'ig'), self_domain), charset)
 
-          if encoding is 'gzip'
-            buffer = zlib.gzipSync buffer
+          buffer = zlib.gzipSync buffer if encoding is 'gzip'
 
         res.send buffer
 

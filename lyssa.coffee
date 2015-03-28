@@ -5,7 +5,7 @@ _ = require 'underscore'
 application = require './lib/application'
 response = require './lib/response'
 
-proxy = require './lib/middleware/proxy'
+proxy = require './lib/middleware/proxy/index'
 rawBody = require './lib/middleware/rawBody'
 
 request =
