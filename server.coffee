@@ -1,7 +1,11 @@
 lyssa = require './lyssa'
 
-server = lyssa
-  target: 'http://lucy.faceair.me'
+server_1 = lyssa
+  target: 'http://www.guanggoo.com'
   forward: 'http://localhost:8000'
+server_1.listen 8000
 
-server.listen 8000
+server_2 = lyssa
+  target: 'https://www.v2ex.com/'
+  forward: 'http://localhost:9000'
+server_2.listen 9000

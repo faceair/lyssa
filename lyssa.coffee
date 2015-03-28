@@ -20,7 +20,7 @@ module.exports = (options) ->
 
     app.handle req, res, next
 
-  _.extend app, application
+  _.extend app, application()
 
   app.use rawBody options.limit
 
