@@ -22,7 +22,7 @@
     "chardet": "0.0.8",
     "charset-parser": "^0.2.0",
     "iconv-lite": "^0.4.7",
-    "node-pluggable": "^0.1.4",
+    "node-pluggable": "^0.1.6",
     "raw-body": "^1.3.3",
     "underscore": "^1.8.2"
   }
