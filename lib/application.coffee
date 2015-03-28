@@ -1,6 +1,7 @@
 http = require 'http'
 util = require 'util'
-pluggable = require 'node-pluggable'
+Pluggable = require('node-pluggable')
+pluggable = new Pluggable()
 
 exports.use = pluggable.use
 exports.on = pluggable.bind
