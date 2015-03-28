@@ -5,7 +5,7 @@ charsetParser = require 'charset-parser'
 BufferHelper = require 'bufferhelper'
 
 module.exports = (options) ->
-  {domain, self_domain} = options
+  {target, forward} = options
 
   return (httpRes, callback) ->
     bufferHelper = new BufferHelper
@@ -17,7 +17,7 @@ module.exports = (options) ->
         buffer = zlib.gunzipSync buffer if encoding is 'gzip'
 
         charset = charsetParser(httpRes.headers['content-type']) or chardet.detect(buffer)
-        buffer = iconv.encode(iconv.decode(buffer, charset).replace(new RegExp(domain, 'ig'), self_domain), charset)
+        buffer = iconv.encode(iconv.decode(buffer, charset).replace(new RegExp(target, 'ig'), forward), charset)
 
         buffer = zlib.gzipSync buffer if encoding is 'gzip'
 
