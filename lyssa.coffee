@@ -31,13 +31,13 @@ module.exports = (options) ->
       res.send 404, "Cannot #{req.method} #{req.url}\n"
 
   app.on 'start', ->
-    console.info "lyssa is runing ..."
+    console.log "lyssa is runing ..."
 
   app.on 'error', (err, req, res) ->
-    res.send 500, 'Something blew up!'
+    res.send 500, 'Something blew up!' if res
     console.error err.stack or err.toString()
 
   app.on 'after', (req, res) ->
-    console.info "#{req.method} #{req.url} #{res.statusCode} #{_.now() - req.timestamp}ms"
+    console.log "#{req.method} #{req.url} #{res.statusCode} #{_.now() - req.timestamp}ms"
 
   app

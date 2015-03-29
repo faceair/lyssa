@@ -23,4 +23,6 @@ module.exports = ->
           pluggable.emit 'start'
           callback() if callback
       ]
+      server.on 'upgrade', (req, socket, head) ->
+        pluggable.emit 'upgrade', req, socket, head
   }

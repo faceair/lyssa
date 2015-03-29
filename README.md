@@ -6,6 +6,7 @@ A simple reverse proxy.
 
 * http
 * https
+* websocket
 
 ## usage
 
@@ -26,7 +27,6 @@ A simple reverse proxy.
 
 ## todo
 
-* websocket
 * https cert
 
 ### License
