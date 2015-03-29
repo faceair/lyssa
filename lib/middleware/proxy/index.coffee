@@ -1,5 +1,5 @@
 module.exports = (app, options) ->
-  {target, forward} = options
+  {target, forward} = options if options
   unless target and forward
     throw new Error 'domain should not be empty.'
 

@@ -22,7 +22,11 @@ module.exports = (options) ->
 
   _.extend app, application()
 
-  app.use rawBody options.limit
+  if options and options.limit
+    limit = options.limit
+  else
+    limit = '1mb'
+  app.use rawBody limit
 
   proxy app, options
 
