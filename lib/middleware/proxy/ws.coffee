@@ -9,36 +9,32 @@ module.exports = (app, options)->
   return (req, socket) ->
     req.timestamp = _.now()
 
-    for fn in [
-      (req, socket) ->
-        if req.method isnt 'GET' or ! req.headers.upgrade or req.headers.upgrade.toLowerCase() isnt 'websocket'
-          socket.destroy()
+    if req.method isnt 'GET' or ! req.headers.upgrade or req.headers.upgrade.toLowerCase() isnt 'websocket'
+      return socket.destroy()
 
-      (req, socket, options) ->
-        setupSocket socket
-        proxyConf = require('./lib/proxyConf')(options)
-        proxyConf req, (httpLib, httpConf) ->
-          proxyReq = httpLib.request httpConf
+    setupSocket socket
 
-          proxyReq.on 'error', (err) ->
-            app.emit 'error', err
+    proxyConf = require('./lib/proxyConf')(options)
+    proxyConf req, (httpLib, httpConf) ->
+      proxyReq = httpLib.request httpConf
 
-          proxyReq.on 'upgrade', (proxyRes, proxySocket) ->
+      proxyReq.on 'error', (err) ->
+        app.emit 'error', err
 
-            proxySocket.on 'error', (err) ->
-              app.emit 'error', err
+      proxyReq.on 'upgrade', (proxyRes, proxySocket) ->
 
-            setupSocket proxySocket
+        proxySocket.on 'error', (err) ->
+          app.emit 'error', err
 
-            socket.write 'HTTP/1.1 101 Switching Protocols\r\n'
-            headersArr = []
-            for key, value of proxyRes.headers
-              headersArr.push "#{key}: #{value}"
-            socket.write headersArr.join('\r\n') + '\r\n\r\n'
-            socket.pipe(proxySocket).pipe socket
+        setupSocket proxySocket
 
-            app.emit 'after', req, proxyRes
+        headersArr = []
+        for key, value of proxyRes.headers
+          headersArr.push "#{key}: #{value}"
+        socket.write 'HTTP/1.1 101 Switching Protocols\r\n' + headersArr.join('\r\n') + '\r\n\r\n'
 
-          req.pipe proxyReq
-    ]
-      fn(req, socket, options)
+        socket.pipe(proxySocket).pipe socket
+
+        app.emit 'after', req, proxyRes
+
+      req.pipe proxyReq
