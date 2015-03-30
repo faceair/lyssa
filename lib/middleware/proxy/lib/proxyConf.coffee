@@ -10,8 +10,11 @@ module.exports = (options) ->
     self_host = url.parse(forward).host
     {protocol, host, port, hostname} = url.parse target
 
-    headers = _.mapObject req.headers, (value) ->
-      value.replace self_host, host
+    headers = _.mapObject req.headers, (value, key) ->
+      if key is 'host'
+        host
+      else
+        value.replace self_host, host
 
     switch protocol
       when 'https:'

@@ -28,4 +28,6 @@ module.exports = ->
       ]
       server.on 'upgrade', (req, socket, head) ->
         pluggable.emit 'upgrade', req, socket, head
+      pluggable.bind 'close', ->
+        server.close()
   }

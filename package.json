@@ -32,6 +32,7 @@
   "devDependencies": {
     "chai": "^2.2.0",
     "supertest": "^0.15.0",
+    "nodejs-websocket": "^1.2.1",
     "coffee-coverage": "^0.4.5",
     "mocha": "^2.2.1",
     "mocha-reporter-cov-summary": "^0.1.1"
