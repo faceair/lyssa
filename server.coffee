@@ -1,7 +1,7 @@
 lyssa = require './lyssa'
 
 server = lyssa
-  target: 'http://echo.websocket.org'
-  forward: 'http://localhost'
+  target: 'http://lucy.faceair.me'
+  forward: 'http://localhost:8000'
 
-server.listen 80
+server.listen 8000

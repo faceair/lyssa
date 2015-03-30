@@ -1,6 +1,6 @@
 getRawBody = require 'raw-body'
 
-module.exports = (limit = '1mb') ->
+module.exports = (limit) ->
   return (req, res, next) ->
     getRawBody req,
       length: req.headers['content-length'],
