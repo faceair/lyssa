@@ -22,9 +22,9 @@ A simple reverse proxy.
 
 `require('lyssa')(option)`
 
-- option.target domain of proxy server
-- option.forward your own domain
-- option.limit the byte limit of the body, default `1mb`
+- `option.target` domain of proxy server
+- `option.forward` your own domain
+- `option.limit` the byte limit of the body, default `1mb`
 
 ## todo
 
