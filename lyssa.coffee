@@ -22,26 +22,21 @@ module.exports = (options) ->
 
   _.extend app, application()
 
-  if options and options.limit
-    limit = options.limit
-  else
-    limit = '1mb'
+  limit = if options then options.limit ? '1mb' else '1mb'
   app.use rawBody limit
 
-  proxy app, options
-
-  app.use (req, res) ->
-    unless res.finished and res.writable
-      res.send 404, "Cannot #{req.method} #{req.url}\n"
+  proxy app, options if options
 
   app.on 'start', ->
-    console.log "lyssa is runing ..."
+    unless process.env.COV_TEST is 'true'
+      console.log "lyssa is runing ..."
 
   app.on 'error', (err, req, res) ->
     res.send 500, 'Something blew up!' if res
     console.error err.stack or err.toString()
 
   app.on 'after', (req, res) ->
-    console.log "#{req.method} #{req.url} #{res.statusCode} #{_.now() - req.timestamp}ms"
+    unless process.env.COV_TEST is 'true'
+      console.log "#{req.method} #{req.url} #{res.statusCode} #{_.now() - req.timestamp}ms"
 
   app
