@@ -33,7 +33,8 @@ module.exports = (options) ->
 
   app.on 'error', (err, req, res) ->
     res.send 500, 'Something blew up!' if res
-    console.error err.stack or err.toString()
+    unless process.env.COV_TEST is 'true'
+      console.error err.stack or err.toString()
 
   app.on 'after', (req, res) ->
     unless process.env.COV_TEST is 'true'
