@@ -166,10 +166,10 @@ describe 'application', ->
       ws.createServer((conn) ->
         conn.on 'text', (str) ->
           conn.sendText str
-      ).listen(80)
+      ).listen(8001)
 
       app = lyssa
-        target: 'http://127.0.0.1'
+        target: 'ws://127.0.0.1:8001'
         forward: 'http://localhost:8080'
       app.listen 8080
 

@@ -17,7 +17,7 @@ module.exports = (options) ->
         value.replace self_host, host
 
     switch protocol
-      when 'https:'
+      when 'https:' or 'wss:'
         httpLib = https
         port = 443
       else
