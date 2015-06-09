@@ -5,7 +5,7 @@ setupSocket = (socket) ->
   socket.setNoDelay true
   socket.setKeepAlive true, 0
 
-module.exports = (app, options)->
+module.exports = (app, options) ->
   return (req, socket) ->
     req.timestamp = _.now()
 

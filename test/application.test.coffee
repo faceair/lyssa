@@ -10,7 +10,7 @@ describe 'application', ->
 
       app.listen 8000
 
-      supertest app
+      supertest('http://localhost:8000')
       .get '/'
       .end (err, res) ->
         res.text.should.be.equal 'response content'
@@ -26,7 +26,7 @@ describe 'application', ->
 
       app.listen 8000
 
-      supertest app
+      supertest('http://localhost:8000')
       .get '/hello'
       .end (err, res) ->
         res.text.should.be.equal 'response content'
@@ -37,13 +37,13 @@ describe 'application', ->
       app = lyssa()
       app.listen 8000
 
-      supertest app
+      supertest('http://localhost:8000')
       .get '/hello'
       .end (err, res) ->
         res.status.should.be.equal 404
-        res.text.should.be.equal "Cannot GET /hello\n"
+        res.text.should.be.equal 'Cannot GET /hello\n'
         app.emit 'close'
-        done err
+        done()
 
     it 'next error', (done) ->
       app = lyssa()
@@ -53,26 +53,26 @@ describe 'application', ->
 
       app.listen 8000
 
-      supertest app
+      supertest('http://localhost:8000')
       .get '/hello'
       .end (err, res) ->
         res.status.should.be.equal 500
-        res.text.should.be.equal "Something blew up!"
+        res.text.should.be.equal 'Something blew up!'
         app.emit 'close'
-        done err
+        done()
 
     it 'show logger', (done) ->
       process.env.COV_TEST = 'false'
       app = lyssa()
       app.listen 8000
 
-      supertest app
+      supertest('http://localhost:8000')
       .get '/hello'
       .end (err, res) ->
         res.status.should.be.equal 404
-        res.text.should.be.equal "Cannot GET /hello\n"
+        res.text.should.be.equal 'Cannot GET /hello\n'
         app.emit 'close'
-        done err
+        done()
 
     it 'domain should not be empty', (done) ->
       (->
@@ -92,11 +92,11 @@ describe 'application', ->
 
       app.listen 8000
 
-      supertest app
+      supertest('http://localhost:8000')
       .get '/hello'
       .end (err, res) ->
         res.status.should.be.equal 201
-        res.text.should.be.equal "miao"
+        res.text.should.be.equal 'miao'
         app.emit 'close'
         done err
 
@@ -110,22 +110,23 @@ describe 'application', ->
 
       app.listen 8000
 
-      supertest app
+      supertest('http://localhost:8000')
       .get '/hello'
       .end (err, res) ->
         res.status.should.be.equal 200
-        res.text.should.be.equal "miao"
+        res.text.should.be.equal 'miao'
         app.emit 'close'
         done err
 
   describe 'http proxy', ->
     it 'success', (done) ->
+      @timeout = 60
       app = lyssa
-        target: 'http://www.baidu.com'
+        target: 'http://lucy.faceair.me'
         forward: 'http://localhost:8000'
       app.listen 8000
 
-      supertest app
+      supertest('http://localhost:8000')
       .get '/'
       .end (err, res) ->
         res.status.should.be.equal 200
@@ -138,12 +139,12 @@ describe 'application', ->
         forward: 'http://localhost:8000'
       app.listen 8000
 
-      supertest app
+      supertest('http://localhost:8000')
       .get '/'
       .end (err, res) ->
         res.status.should.be.equal 500
         app.emit 'close'
-        done err
+        done()
 
   describe 'https proxy', ->
     it 'success', (done) ->
@@ -152,7 +153,7 @@ describe 'application', ->
         forward: 'http://localhost:8000'
       app.listen 8000
 
-      supertest app
+      supertest('http://localhost:8000')
       .get '/'
       .end (err, res) ->
         res.status.should.be.equal 200
@@ -178,6 +179,3 @@ describe 'application', ->
         conn.on 'text', (str) ->
           str.should.be.equal 'miao'
           done()
-
-
-

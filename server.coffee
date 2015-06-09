@@ -1,7 +1,6 @@
 lyssa = require './lyssa'
 
-server = lyssa
-  target: 'http://lucy.faceair.me'
+app = lyssa
+  target: 'http://www.baidu.com'
   forward: 'http://localhost:8000'
-
-server.listen 8000
+app.listen 8000

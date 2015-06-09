@@ -1,11 +1,11 @@
 _ = require 'underscore'
 
 exports.get = (field) ->
- @getHeader field
+  @getHeader field
 
 exports.status = (status) ->
   @statusCode = status
-  @
+  return @
 
 exports.set = exports.header = (name, value) ->
   headers = name
@@ -16,7 +16,7 @@ exports.set = exports.header = (name, value) ->
 
   for name, value of headers
     @setHeader name, value
-  @
+  return @
 
 exports.send = (status, data) ->
   unless _.isNumber status
@@ -27,4 +27,4 @@ exports.send = (status, data) ->
   @statusCode = status if status
 
   @end data
-  @
+  return @
