@@ -14,7 +14,7 @@ describe 'application', ->
       .get '/'
       .end (err, res) ->
         res.text.should.be.equal 'response content'
-        app.emit 'close'
+        app.close()
         done err
 
 
@@ -30,7 +30,7 @@ describe 'application', ->
       .get '/hello'
       .end (err, res) ->
         res.text.should.be.equal 'response content'
-        app.emit 'close'
+        app.close()
         done err
 
     it 'no middleware', (done) ->
@@ -42,7 +42,7 @@ describe 'application', ->
       .end (err, res) ->
         res.status.should.be.equal 404
         res.text.should.be.equal 'Cannot GET /hello\n'
-        app.emit 'close'
+        app.close()
         done()
 
     it 'next error', (done) ->
@@ -57,8 +57,8 @@ describe 'application', ->
       .get '/hello'
       .end (err, res) ->
         res.status.should.be.equal 500
-        res.text.should.be.equal 'Something blew up!'
-        app.emit 'close'
+        res.text.should.be.equal 'Internal Server Error'
+        app.close()
         done()
 
     it 'show logger', (done) ->
@@ -71,7 +71,7 @@ describe 'application', ->
       .end (err, res) ->
         res.status.should.be.equal 404
         res.text.should.be.equal 'Cannot GET /hello\n'
-        app.emit 'close'
+        app.close()
         done()
 
     it 'domain should not be empty', (done) ->
@@ -97,7 +97,7 @@ describe 'application', ->
       .end (err, res) ->
         res.status.should.be.equal 201
         res.text.should.be.equal 'miao'
-        app.emit 'close'
+        app.close()
         done err
 
 
@@ -115,14 +115,13 @@ describe 'application', ->
       .end (err, res) ->
         res.status.should.be.equal 200
         res.text.should.be.equal 'miao'
-        app.emit 'close'
+        app.close()
         done err
 
   describe 'http proxy', ->
     it 'success', (done) ->
-      @timeout = 60
       app = lyssa
-        target: 'http://lucy.faceair.me'
+        target: 'http://baike.baidu.com'
         forward: 'http://localhost:8000'
       app.listen 8000
 
@@ -130,7 +129,7 @@ describe 'application', ->
       .get '/'
       .end (err, res) ->
         res.status.should.be.equal 200
-        app.emit 'close'
+        app.close()
         done err
 
     it 'failed', (done) ->
@@ -143,7 +142,7 @@ describe 'application', ->
       .get '/'
       .end (err, res) ->
         res.status.should.be.equal 500
-        app.emit 'close'
+        app.close()
         done()
 
   describe 'https proxy', ->
@@ -157,7 +156,7 @@ describe 'application', ->
       .get '/'
       .end (err, res) ->
         res.status.should.be.equal 200
-        app.emit 'close'
+        app.close()
         done err
 
   describe 'websocket proxy', ->

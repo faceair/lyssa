@@ -13,16 +13,16 @@ module.exports = (options) ->
   proxy app, options if options
 
   app.on 'start', ->
-    unless process.env.COV_TEST is 'true'
+    unless process.env.NODE_ENV is 'test'
       console.log 'lyssa is runing ...'
 
   app.on 'error', (err, req, res) ->
-    res.send 500, 'Something blew up!' if res
-    unless process.env.COV_TEST is 'true'
+    res.send 500, 'Internal Server Error' if res
+    unless process.env.NODE_ENV is 'test'
       console.error err.stack or err.toString()
 
   app.on 'after', (req, res) ->
-    unless process.env.COV_TEST is 'true'
+    unless process.env.NODE_ENV is 'test'
       console.log "#{req.method} #{req.url} #{res.statusCode} #{_.now() - req.timestamp}ms"
 
   return app

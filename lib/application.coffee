@@ -23,12 +23,16 @@ module.exports = class Application extends Pluggable
 
       @handle req, res
 
-    server.listen port, =>
+    server.listen port, (callback) =>
+      
+      @close = (callback) =>
+        server.close()
+        @emit 'close'
+        callback() if callback
+
+      server.on 'upgrade', (req, socket, head) =>
+        @emit 'upgrade', req, socket, head
+
       @emit 'start'
+
       callback() if callback
-
-    server.on 'upgrade', (req, socket, head) =>
-      @emit 'upgrade', req, socket, head
-
-    @on 'close', ->
-      server.close()
