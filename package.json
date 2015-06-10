@@ -1,6 +1,6 @@
 {
   "name": "lyssa",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "A simple reverse proxy.",
   "main": "index.js",
   "repository": {
@@ -23,7 +23,7 @@
     "charset-parser": "^0.2.0",
     "coffee-script": "^1.9.1",
     "iconv-lite": "^0.4.7",
-    "node-pluggable": "^0.3",
+    "node-pluggable": "^0.3.1",
     "raw-body": "^1.3.3",
     "underscore": "^1.8.2"
   },

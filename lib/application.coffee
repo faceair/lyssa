@@ -1,5 +1,4 @@
 http = require 'http'
-util = require 'util'
 
 Pluggable = require 'node-pluggable'
 _ = require 'underscore'
